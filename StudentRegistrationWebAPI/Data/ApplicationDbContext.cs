@@ -15,6 +15,7 @@ namespace StudentRegistrationWebAPI.Data
         public DbSet<Course> Course { get; set; }
         public DbSet<Models.Stream> Stream { get; set; }
 
+        public DbSet<User> Users { get; set; }
 
 
 
