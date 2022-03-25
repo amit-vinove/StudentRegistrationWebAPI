@@ -73,11 +73,11 @@ namespace StudentRegistrationWebAPI.Controllers
         }
 
         [HttpPost("AddStudent")]
-        public IEnumerable<StudentViewModel> AddStudent(StudentViewModel newStudent)
+        public Student AddStudent(StudentViewModel newStudent)
         {
             Student obj = new Student
             {
-                Id = 0,
+                Id=0,
                 FirstName = newStudent.FirstName,
                 LastName = newStudent.LastName,
                 Gender = newStudent.Gender,
@@ -96,8 +96,9 @@ namespace StudentRegistrationWebAPI.Controllers
             };
             _db.FormData.Add(obj);
             _db.SaveChanges();
-            return GetAllStudents();
-
+            var data = _db.FormData.Max(x => x.Id);
+            obj.Id = data;
+            return obj ;
         }
 
         [HttpPut("EditStudent")]

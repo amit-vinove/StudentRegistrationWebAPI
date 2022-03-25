@@ -34,7 +34,7 @@ namespace StudentRegistrationWebAPI.Controllers
         }
 
         [HttpPost("CreateUser")]
-        public User AddCourse(User newUser)
+        public User AddUser(User newUser)
         {
             _db.Users.Add(newUser);
             _db.SaveChanges();
@@ -42,19 +42,24 @@ namespace StudentRegistrationWebAPI.Controllers
         }
 
         [HttpPost("Login")]
-        public Task<ActionResult> Login(User userLogin)
+        public async Task<ActionResult> Login(User userLogin)
         {
             if (userLogin == null)
                 return BadRequest("Invalid login details");
 
-             user = _db.Users.FirstOrDefaultAsync(m => m.UserName == userLogin.UserName);
+            User user = _db.Users.FirstOrDefault(m => m.UserName == userLogin.UserName);
             if (user == null)
                 return NotFound("User Not Found!");
 
-            if (user != userLogin.Password)
+            if (user.Password != userLogin.Password)
                 return BadRequest("Wrong Credentails");
 
-            return Ok("Logged In");
+            return Ok(
+                new ResponseGlobal()
+                {
+                    ResponseCode = ((int)System.Net.HttpStatusCode.OK),
+                    Message = "Logged In"
+                }) ;
         }
 
 
