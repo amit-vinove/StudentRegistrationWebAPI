@@ -49,31 +49,90 @@ namespace StudentRegistrationWebAPI.Controllers
             return empList;
         }
 
-        [HttpGet("GetEmployeeById")]
-        public Employee GetEmployeeById(int Id)
+        [HttpGet("GetEmployeeDirectory")]
+        public IEnumerable<EmployeeViewModel> GetEmployeeByTeam()
         {
-            var empData = _db.Employee.Find(Id);
-            Employee employee = new Employee
-            {
-                EmployeeId = empData.EmployeeId,
-                EmployeeFirstName = empData.EmployeeFirstName,
-                EmployeeLastName = empData.EmployeeLastName,
-                EmployeeGender= empData.EmployeeGender,
-                EmployeeDOB = empData.EmployeeDOB,
-                EmployeeNumber= empData.EmployeeNumber,
-                EmployeeManager= empData.EmployeeManager,
-                CurrentAddress = empData.CurrentAddress,
-                PermanentAddress =  empData.PermanentAddress,
-                About = empData.About,
-                UserId = empData.UserId,
-                Designation = empData.Designation,
-                EmployeeTeam = empData.EmployeeTeam,
-                Location = empData.Location,
-                Email = empData.Email,
-                Phone = empData.Phone,
-            };
 
-            return employee;
+            var empData =
+                (from empDB in _db.Employee
+                 join teamDB in _db.Teams
+                 on empDB.EmployeeTeam equals teamDB.TeamId
+                 select new EmployeeViewModel()
+                 {
+                     EmployeeId = empDB.EmployeeId,
+                     EmployeeFirstName = empDB.EmployeeFirstName,
+                     EmployeeLastName = empDB.EmployeeLastName,
+                     EmployeeTeam = teamDB.TeamName,
+                     Designation = empDB.Designation,
+                     Location = empDB.Location,
+                     Email = empDB.Email
+                 }).ToList();
+
+            return empData;
+        }
+
+        [HttpGet("GetEmployeeById")]
+        public IEnumerable<EmployeeProfileViewModel> GetEmployeeById(int empId)
+        {
+            var empData = (from empDB in _db.Employee
+                           join teamDB in _db.Teams
+                           on empDB.EmployeeTeam equals teamDB.TeamId
+                           where empId == empDB.EmployeeId
+                           select new EmployeeProfileViewModel()
+                           {
+                             EmployeeId = empDB.EmployeeId,
+                             EmployeeFirstName = empDB.EmployeeFirstName,
+                             EmployeeLastName = empDB.EmployeeLastName,
+                             EmployeeGender = empDB.EmployeeGender,
+                             EmployeeDOB = empDB.EmployeeDOB,
+                             EmployeeNumber = empDB.EmployeeNumber,
+                             EmployeeManager = empDB.EmployeeManager,
+                             CurrentAddress = empDB.CurrentAddress,
+                             PermanentAddress = empDB.PermanentAddress,
+                             About = empDB.About,
+                             UserId = empDB.UserId,
+                             Designation = empDB.Designation,
+                             EmployeeTeam = teamDB.TeamName,
+                             Location = empDB.Location,
+                             Email = empDB.Email,
+                             Phone = empDB.Phone,
+                            });
+
+            return empData;
+        }
+
+        [HttpGet("GetEmployeeByUsername")]
+        public EmployeeProfileViewModel GetEmployeeByUsername(string username)
+        {
+            var empData = (from empDB in _db.Employee
+                           join userDB in _db.Users
+                           on empDB.UserId equals userDB.UserId
+                           join teamDB in _db.Teams
+                           on empDB.EmployeeTeam equals teamDB.TeamId
+                           where username == userDB.UserName
+                           select new EmployeeProfileViewModel()
+                           {
+                               EmployeeId = empDB.EmployeeId,
+                               EmployeeFirstName = empDB.EmployeeFirstName,
+                               EmployeeLastName = empDB.EmployeeLastName,
+                               EmployeeGender = empDB.EmployeeGender,
+                               EmployeeDOB = empDB.EmployeeDOB,
+                               EmployeeNumber = empDB.EmployeeNumber,
+                               EmployeeManager = empDB.EmployeeManager,
+                               CurrentAddress = empDB.CurrentAddress,
+                               PermanentAddress = empDB.PermanentAddress,
+                               About = empDB.About,
+                               UserId = empDB.UserId,
+                               Designation = empDB.Designation,
+                               EmployeeTeam = teamDB.TeamName,
+                               TeamId = teamDB.TeamId,
+                               Location = empDB.Location,
+                               Email = empDB.Email,
+                               Phone = empDB.Phone,
+                           });  
+            var empdata1=empData.ToArray();
+
+            return empdata1[0];
         }
 
         [HttpGet("GetEmployeeByTeam")]
@@ -94,6 +153,30 @@ namespace StudentRegistrationWebAPI.Controllers
                               Location = empDB.Location,
                               Email = empDB.Email
                           }).ToList();
+
+            return empData;
+        }
+
+
+        [HttpGet("GetEmployeeTeamByUsername")]
+        public IEnumerable<EmployeeViewModel> GetEmployeeTeamByUsername(string username)
+        {
+            var empDetails = GetEmployeeByUsername(username);
+            var empData =
+                (from empDB in _db.Employee
+                 join teamDB in _db.Teams
+                 on empDB.EmployeeTeam equals teamDB.TeamId
+                 where teamDB.TeamId == empDetails.TeamId
+                 select new EmployeeViewModel()
+                 {
+                     EmployeeId = empDB.EmployeeId,
+                     EmployeeFirstName = empDB.EmployeeFirstName,
+                     EmployeeLastName = empDB.EmployeeLastName,
+                     EmployeeTeam = teamDB.TeamName,
+                     Designation = empDB.Designation,
+                     Location = empDB.Location,
+                     Email = empDB.Email
+                 }).ToList();
 
             return empData;
         }
