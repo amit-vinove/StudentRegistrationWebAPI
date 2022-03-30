@@ -18,6 +18,7 @@ namespace StudentRegistrationWebAPI.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Employee> Employee { get; set; }
         public DbSet<Teams> Teams { get; set; }
+        public DbSet<Todo> Todos { get; set; }
 
 
 
