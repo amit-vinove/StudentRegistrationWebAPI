@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace StudentRegistrationWebAPI.Models
 {
@@ -9,10 +10,12 @@ namespace StudentRegistrationWebAPI.Models
         [Required]
         public string TodoName { get; set; }
 
-        [Required]
         public int UserId { get; set; }
 
         public bool Checked { get; set;}
+
+        [NotMapped]
+        public string Username { get; set; }
 
     }
 }

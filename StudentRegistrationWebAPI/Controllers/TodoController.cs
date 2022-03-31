@@ -23,13 +23,32 @@ namespace StudentRegistrationWebAPI.Controllers
             return todos;
         }
 
+        [HttpGet("GetTodoByUsername")]
+
+        public IEnumerable<Todo> GetTodoByUsername(string username)
+        {
+            var todoData = (from todoDb in _db.Todos
+                            join userDB in _db.Users
+                            on todoDb.UserId equals userDB.UserId
+                            where userDB.UserName == username
+                            select new Todo()
+                            {
+                                TodoId = todoDb.TodoId,
+                                TodoName = todoDb.TodoName,
+                                UserId = todoDb.UserId,
+                            }).ToList();
+            return todoData;
+        }
+
         [HttpPost("AddTodo")]
         public Todo CreateTodo(Todo todo)
         {
+            var username = _db.Users.FirstOrDefault(m => m.UserName == todo.Username);
+
             Todo newTodo = new Todo
             {
                 TodoName = todo.TodoName,
-                UserId = todo.UserId,
+                UserId = username.UserId,
             };
             _db.Todos.Add(newTodo);
             _db.SaveChanges();
@@ -47,7 +66,7 @@ namespace StudentRegistrationWebAPI.Controllers
                 {
                     ResponseCode = ((int)System.Net.HttpStatusCode.OK),
                     Message = "Todo Deleted",
-                    Data = GetAllTodo()
+                    Data = true
                 });
         }
 
@@ -62,7 +81,7 @@ namespace StudentRegistrationWebAPI.Controllers
     {
         ResponseCode = ((int)System.Net.HttpStatusCode.OK),
         Message = "Todo Checked",
-        Data = todo
+        Data = GetAllTodo()
     });
         }
 

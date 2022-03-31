@@ -34,11 +34,22 @@ namespace StudentRegistrationWebAPI.Controllers
         }
 
         [HttpPost("CreateUser")]
-        public User AddUser(User newUser)
+        public async Task<ActionResult> AddUser(User newUser)
         {
+            var userCheck = GetUserByUsername(newUser.UserName);
+            if(userCheck != null)
+            {
+                return BadRequest("Username Already Exist");
+            }
             _db.Users.Add(newUser);
             _db.SaveChanges();
-            return newUser;
+            return Ok(
+                new ResponseGlobal()
+                {
+                    ResponseCode = ((int)System.Net.HttpStatusCode.OK),
+                    Message = "User Created Successfully",
+                    Data = newUser
+                });
         }
 
         [HttpPost("Login")]
